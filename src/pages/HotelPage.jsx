@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const HotelRegistration = () => {
   const [formData, setFormData] = useState({
@@ -34,12 +35,17 @@ const HotelRegistration = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Hotel Registered:", formData);
-    alert("Hotel registered successfully (Mocked)");
-
-    localStorage.setItem(`hotel_${formData.mobileNumber}`, JSON.stringify(formData));
+  
+    try {
+      const res = await axios.post('http://localhost:5000/api/hotels/register', formData);
+      alert('Hotel registered successfully!');
+      console.log("Server response:", res.data);
+    } catch (err) {
+      console.error('Error registering hotel:', err);
+      alert('Hotel registration failed');
+    }
   };
 
   return (
@@ -49,13 +55,13 @@ const HotelRegistration = () => {
         onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px' }}
       >
-        <input type="text" name="hotelName" placeholder="Hotel Name" value={formData.hotelName} onChange={handleChange} required />
-        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
-        <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} required />
-        <input type="number" name="totalRooms" placeholder="Total Rooms" value={formData.totalRooms} onChange={handleChange} required />
-        <input type="number" name="pricePerRoom" placeholder="Price per Room (₹)" value={formData.pricePerRoom} onChange={handleChange} required />
-        <input type="tel" name="mobileNumber" placeholder="Hotel Mobile Number" value={formData.mobileNumber} onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Set Password" value={formData.password} onChange={handleChange} required />
+<input type="text" name="name" placeholder="Hotel Name" value={formData.name} onChange={handleChange} required />
+<input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
+<input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} required />
+<input type="number" name="roomsAvailable" placeholder="Total Rooms" value={formData.roomsAvailable} onChange={handleChange} required />
+<input type="number" name="price" placeholder="Price per Room (₹)" value={formData.price} onChange={handleChange} required />
+<input type="tel" name="phone" placeholder="Hotel Mobile Number" value={formData.phone} onChange={handleChange} required />
+
 
         {/* ✅ Image Upload */}
         <input type="file" accept="image/*" onChange={handleImageChange} required />

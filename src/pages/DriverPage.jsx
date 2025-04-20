@@ -18,12 +18,45 @@ const DriverRegistration = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem(`driver_${formData.mobileNumber}`, JSON.stringify(formData));
-    alert('Driver registered successfully!');
+  
+    const driverPayload = {
+      name: formData.driverName,
+      phone: formData.mobileNumber,
+      carNumberPlate: formData.carNumber,
+      licenseNumber: formData.licenseNumber,
+      carModel: formData.carModel,
+      carType: formData.carType,
+      carPrice: parseFloat(formData.cabPrice),
+      city: formData.city
+    };
+  
+    try {
+      const response = await fetch('http://localhost:5000/api/drivers/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(driverPayload)
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert("Driver registered successfully!");
+        console.log("Driver:", data.Driver);
+      } else {
+        alert(data.message || "Registration failed");
+        console.error(data);
+      }
+  
+    } catch (error) {
+      console.error("Error registering driver:", error);
+      alert("Something went wrong");
+    }
   };
-
+  
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Driver Registration</h2>

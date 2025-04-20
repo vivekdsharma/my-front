@@ -19,11 +19,44 @@ const TouristGuideRegistration = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem(`guide_${formData.mobileNumber}`, JSON.stringify(formData));
-    alert('Tourist Guide registered successfully!');
+  
+    const guidePayload = {
+      name: formData.guideName,
+      city: formData.city,
+      phone: formData.mobileNumber,
+      languages: formData.languages.split(',').map(lang => lang.trim()),
+      experience: parseInt(formData.experience),
+      price: parseFloat(formData.chargesPerDay),
+      password: formData.password
+    };
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/guides/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(guidePayload)
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert("Guide registered successfully!");
+        console.log("Registered Guide:", data.Guide);
+      } else {
+        alert(data.message || "Registration failed.");
+        console.error(data);
+      }
+  
+    } catch (error) {
+      console.error("Error registering guide:", error);
+      alert("Something went wrong while registering.");
+    }
   };
+  
 
   return (
     <div style={{ padding: '2rem' }}>
